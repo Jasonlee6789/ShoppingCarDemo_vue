@@ -104,14 +104,12 @@
                 件商品，总计
                 <strong class="total">¥{{sum}}</strong> 元</span
               >
-              <span class="pay-btn" v-bind:class="{disabled: true}"
-                >立即支付</span
-              >
-              <!-- <span
-                class="pay-btn"
-                v-bind:class="true ? '{{sum}}>0' : 'displayed'"
+              <!-- <span class="pay-btn" v-bind:class="{disabled: true}"
                 >立即支付</span
               > -->
+              <span class="pay-btn" v-bind:class="sum>0 ? '' : 'disabled'"
+                >立即支付</span
+              >
             </div>
           </div>
 
