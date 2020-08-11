@@ -98,18 +98,20 @@
             <div>
               <span
                 >一共选择了
-                <!-- <strong class="quantity">
-                  {{carItems.filter(item => item.checked).map(item =>
-                  item.quantity).reduce((acc,curr) => acc + curr)}}
-                </strong> -->
-                件商品，总计 <strong class="total">¥ 40439.00</strong> 元</span
+                <strong class="quantity">
+                  {{cartItems.filter(cartItem => cartItem.checked).length}}
+                </strong>
+                件商品，总计
+                <strong class="total">¥{{sum}}</strong> 元</span
               >
-              <span class="pay-btn" v-bind:class="{disabled: false}"
+              <span class="pay-btn" v-bind:class="{disabled: true}"
                 >立即支付</span
               >
-              <!-- <span class="pay-btn" v-bind:class="true ? '' : 'displayed'"
-              >立即支付</span
-            > -->
+              <!-- <span
+                class="pay-btn"
+                v-bind:class="true ? '{{sum}}>0' : 'displayed'"
+                >立即支付</span
+              > -->
             </div>
           </div>
 
@@ -174,24 +176,16 @@
             },
           },
 
-          //   sum() {
-          //     let sum = 0;
-          //     for (let i in this.cartItems) {
-          //       if (this.checked[i])
-          //         //如果this[i]的结果为truth，则进行累加
-          //         sum += this.cartItems[i].total;
-          //     }
-          //     return sum;
-          //   },
-
-          //   checkNum: function(){
-
-          //   },
-
-          //批量删除
-          //           delect (){
-          // for(let)
-          //           }
+          sum: function () {
+            let sum = 0;
+            for (let i in this.cartItems) {
+              if (this.cartItems[i].checked == true)
+                //如果this[i]的结果为truth，则进行累加
+                sum +=
+                  (this.cartItems[i].price * this.cartItems[i].quantity) / 100;
+            }
+            return sum.toFixed(2);
+          },
         },
         // 存该组件内部需要使用到的函数@ v-on
         methods: {
