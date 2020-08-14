@@ -150,7 +150,7 @@
           },
         },
         data() {
-          let pages = Math.ceil(this.total / this.pageCap);
+          let pages = Math.floor(this.total / this.pageCap);
           return {
             pages,
           };

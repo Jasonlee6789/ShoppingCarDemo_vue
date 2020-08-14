@@ -51,8 +51,7 @@
           </div>
 
           <ul class="cart-items-list">
-            <!-- <li class="panel flex-row" v-for="cartItem of cartItems"> -->
-            <li class="panel flex-row" v-for="cartItem of showCartItems">
+            <li class="panel flex-row" v-for="cartItem of cartItems">
               <div class="flex-column-checkbox tal">
                 <input type="checkbox" v-model="cartItem.checked" />
               </div>
@@ -115,12 +114,7 @@
           </div>
 
           <div class="pagination-container">
-            <pagination
-              v-bind:page="page"
-              v-bind:total="total"
-              v-bind:pageCap="pageCap"
-              @change="change"
-            ></pagination>
+            <pagination page="1" total="24"></pagination>
           </div>
         </div>
       </div>
@@ -144,13 +138,13 @@
             type: Number,
             default: 0,
           },
-          pageCap: {
+          pagecap: {
             type: Number,
-            default: 1,
+            default: 5,
           },
         },
         data() {
-          let pages = Math.ceil(this.total / this.pageCap);
+          let pages = Math.ceil(this.total / this.pagecap);
           return {
             pages,
           };
@@ -159,18 +153,10 @@
               <div class="pagination">
                     <a href="" class="prev">上一页</a>
 
-<a v-for="p of pages" href=""  @click.prevent="changePage(p)" 
-v-bind:class="{current:p ==page}">{{p}}</a>
+<a v-for="p of pages" href="" v-bind:class="{current:p ==page}">{{p}}</a>
 
                     <a href="" class="next">下一页</a>
                   </div>`,
-
-        methods: {
-          changePage(p) {
-            this.$emit("update:page", p);
-            this.$emit("change", p);
-          },
-        },
       });
       let app = new Vue({
         el: "#app",
@@ -178,9 +164,6 @@ v-bind:class="{current:p ==page}">{{p}}</a>
         data: {
           cartItems,
           // allChecked: false
-          page: 1,
-          total: cartItems.length,
-          pageCap: 4,
         },
         // 派生数据,根据已经存在的数据特征比如点击checkbox生成的一组新数据
         // this.allChecked = true;
@@ -210,7 +193,6 @@ v-bind:class="{current:p ==page}">{{p}}</a>
           },
 
           sum: function () {
-            console.log("计算总的购物车结算价格");
             let sum = 0;
             for (let i in this.cartItems) {
               if (this.cartItems[i].checked == true)
@@ -219,12 +201,6 @@ v-bind:class="{current:p ==page}">{{p}}</a>
                   (this.cartItems[i].price * this.cartItems[i].quantity) / 100;
             }
             return sum.toFixed(2);
-          },
-
-          showCartItems() {
-            let start = (this.page - 1) * this.pageCap;
-            let end = start + this.pageCap;
-            return this.cartItems.slice(start, end);
           },
         },
         // 存该组件内部需要使用到的函数@ v-on
@@ -247,10 +223,6 @@ v-bind:class="{current:p ==page}">{{p}}</a>
             this.cartItems = this.cartItems.filter(
               (cartItem) => cartItem.checked == false
             );
-          },
-
-          change(newPage) {
-            this.page = newPage;
           },
         },
       });

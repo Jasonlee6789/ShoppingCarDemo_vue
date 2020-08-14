@@ -222,9 +222,7 @@ v-bind:class="{current:p ==page}">{{p}}</a>
           },
 
           showCartItems() {
-            let start = (this.page - 1) * this.pageCap;
-            let end = start + this.pageCap;
-            return this.cartItems.slice(start, end);
+            return;
           },
         },
         // 存该组件内部需要使用到的函数@ v-on

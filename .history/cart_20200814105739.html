@@ -118,7 +118,7 @@
             <pagination
               v-bind:page="page"
               v-bind:total="total"
-              v-bind:pageCap="pageCap"
+              v-binf:pageCap="pageCap"
               @change="change"
             ></pagination>
           </div>
@@ -180,7 +180,6 @@ v-bind:class="{current:p ==page}">{{p}}</a>
           // allChecked: false
           page: 1,
           total: cartItems.length,
-          pageCap: 4,
         },
         // 派生数据,根据已经存在的数据特征比如点击checkbox生成的一组新数据
         // this.allChecked = true;
@@ -222,9 +221,7 @@ v-bind:class="{current:p ==page}">{{p}}</a>
           },
 
           showCartItems() {
-            let start = (this.page - 1) * this.pageCap;
-            let end = start + this.pageCap;
-            return this.cartItems.slice(start, end);
+            return;
           },
         },
         // 存该组件内部需要使用到的函数@ v-on

@@ -51,8 +51,7 @@
           </div>
 
           <ul class="cart-items-list">
-            <!-- <li class="panel flex-row" v-for="cartItem of cartItems"> -->
-            <li class="panel flex-row" v-for="cartItem of showCartItems">
+            <li class="panel flex-row" v-for="cartItem of cartItems">
               <div class="flex-column-checkbox tal">
                 <input type="checkbox" v-model="cartItem.checked" />
               </div>
@@ -115,12 +114,7 @@
           </div>
 
           <div class="pagination-container">
-            <pagination
-              v-bind:page="page"
-              v-bind:total="total"
-              v-bind:pageCap="pageCap"
-              @change="change"
-            ></pagination>
+            <pagination page="1" total="24"></pagination>
           </div>
         </div>
       </div>
@@ -133,127 +127,105 @@
     </script> -->
 
     <script>
-      // console.log('cartItems', cartItems);
-      Vue.component("pagination", {
-        props: {
-          page: {
-            type: Number,
-            default: 1,
-          },
-          total: {
-            type: Number,
-            default: 0,
-          },
-          pageCap: {
-            type: Number,
-            default: 1,
-          },
-        },
-        data() {
-          let pages = Math.ceil(this.total / this.pageCap);
-          return {
-            pages,
-          };
-        },
-        template: `
+            // console.log('cartItems', cartItems);
+            Vue.component("pagination", {
+              props: {
+                page: {
+                  type: Number,
+                  default: 1,
+                },
+                total: {
+                  type: Number,
+                  default: 0,
+                },
+      prepage:{
+        type:Number,
+        default: 5
+      }
+
+              },
+              data(){
+                return {
+                  pages:
+                }
+              },
+              template: `
               <div class="pagination">
                     <a href="" class="prev">上一页</a>
 
-<a v-for="p of pages" href=""  @click.prevent="changePage(p)" 
-v-bind:class="{current:p ==page}">{{p}}</a>
+                    <a href="" class="current">4</a>
 
                     <a href="" class="next">下一页</a>
                   </div>`,
+            });
+            let app = new Vue({
+              el: "#app",
+              // 原始数据
+              data: {
+                cartItems,
+                // allChecked: false
+              },
+              // 派生数据,根据已经存在的数据特征比如点击checkbox生成的一组新数据
+              // this.allChecked = true;
+              computed: {
+                allChecked: {
+                  get() {
+                    return this.cartItems.every((cartItem) => cartItem.checked);
+                  },
+                  // <!-- input 状态发生改变以后去会更新allChecked的值,又因为allChecked是computed设置，那么就会触发allChecked的set方法 -->
+                  set(newVal) {
+                    this.cartItems = this.cartItems.map((cartItem) => ({
+                      ...cartItem,
+                      checked: newVal,
+                    }));
 
-        methods: {
-          changePage(p) {
-            this.$emit("update:page", p);
-            this.$emit("change", p);
-          },
-        },
-      });
-      let app = new Vue({
-        el: "#app",
-        // 原始数据
-        data: {
-          cartItems,
-          // allChecked: false
-          page: 1,
-          total: cartItems.length,
-          pageCap: 4,
-        },
-        // 派生数据,根据已经存在的数据特征比如点击checkbox生成的一组新数据
-        // this.allChecked = true;
-        computed: {
-          allChecked: {
-            get() {
-              return this.cartItems.every((cartItem) => cartItem.checked);
-            },
-            // <!-- input 状态发生改变以后去会更新allChecked的值,又因为allChecked是computed设置，那么就会触发allChecked的set方法 -->
-            set(newVal) {
-              this.cartItems = this.cartItems.map((cartItem) => ({
-                ...cartItem,
-                checked: newVal,
-              }));
+                    // this.cartItems = this.cartItems.map(function(cartItem) {
+                    //     return {
+                    //         ...cartItem,
+                    //         checked: newVal
+                    //     };
+                    // });
 
-              // this.cartItems = this.cartItems.map(function(cartItem) {
-              //     return {
-              //         ...cartItem,
-              //         checked: newVal
-              //     };
-              // });
+                    // this.cartItems.forEach(cartItem => {
+                    //     cartItem.checked = newVal;
+                    // });
+                  },
+                },
 
-              // this.cartItems.forEach(cartItem => {
-              //     cartItem.checked = newVal;
-              // });
-            },
-          },
+                sum: function () {
+                  let sum = 0;
+                  for (let i in this.cartItems) {
+                    if (this.cartItems[i].checked == true)
+                      //如果this[i]的结果为truth，则进行累加
+                      sum +=
+                        (this.cartItems[i].price * this.cartItems[i].quantity) / 100;
+                  }
+                  return sum.toFixed(2);
+                },
+              },
+              // 存该组件内部需要使用到的函数@ v-on
+              methods: {
+                add(cartItem, e) {
+                  // console.log('...', cartItem, e);
+                  cartItem.quantity++;
+                },
+                sub(cartItem) {
+                  if (cartItem.quantity > 1) {
+                    cartItem.quantity--;
+                  }
+                },
+                remove(cartItem) {
+                  // 组件method中的函数中this被vue绑定到了该组件实例对象app上了
+                  this.cartItems = this.cartItems.filter((ci) => ci !== cartItem);
+                },
 
-          sum: function () {
-            console.log("计算总的购物车结算价格");
-            let sum = 0;
-            for (let i in this.cartItems) {
-              if (this.cartItems[i].checked == true)
-                //如果this[i]的结果为truth，则进行累加
-                sum +=
-                  (this.cartItems[i].price * this.cartItems[i].quantity) / 100;
-            }
-            return sum.toFixed(2);
-          },
-
-          showCartItems() {
-            let start = (this.page - 1) * this.pageCap;
-            let end = start + this.pageCap;
-            return this.cartItems.slice(start, end);
-          },
-        },
-        // 存该组件内部需要使用到的函数@ v-on
-        methods: {
-          add(cartItem, e) {
-            // console.log('...', cartItem, e);
-            cartItem.quantity++;
-          },
-          sub(cartItem) {
-            if (cartItem.quantity > 1) {
-              cartItem.quantity--;
-            }
-          },
-          remove(cartItem) {
-            // 组件method中的函数中this被vue绑定到了该组件实例对象app上了
-            this.cartItems = this.cartItems.filter((ci) => ci !== cartItem);
-          },
-
-          removeAll() {
-            this.cartItems = this.cartItems.filter(
-              (cartItem) => cartItem.checked == false
-            );
-          },
-
-          change(newPage) {
-            this.page = newPage;
-          },
-        },
-      });
+                removeAll() {
+                  this.cartItems = this.cartItems.filter(
+                    (cartItem) => cartItem.checked == false
+                  );
+                },
+              },
+            });
     </script>
   </body>
 </html>
